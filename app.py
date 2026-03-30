@@ -3,7 +3,7 @@ from groq import Groq
 
 client = Groq(api_key=st.secrets["GROQ_API_KEY"])
 
-st.title("My AI Chatbot")
+st.title("QQ Chatbot")
 
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -17,9 +17,14 @@ if prompt := st.chat_input("Type your message..."):
     with st.chat_message("user"):
         st.write(prompt)
 
+    groq_messages = [
+        {"role": m["role"], "content": m["content"]}
+        for m in st.session_state.messages
+    ]
+
     response = client.chat.completions.create(
         model="llama3-8b-8192",
-        messages=st.session_state.messages
+        messages=groq_messages
     )
 
     reply = response.choices[0].message.content
